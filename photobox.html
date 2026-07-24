@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoBox - Aplikasi Foto Seru</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3436;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .screen.active {
+            display: flex;
+            opacity: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ==================== WELCOME SCREEN ==================== */
+        .welcome-wrapper {
+            perspective: 1000px;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 80px 60px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 550px;
+            text-align: center;
+        }
+
+        .welcome-icon {
+            font-size: 120px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
+
+        .welcome-card h1 {
+            font-size: 52px;
+            color: #2d3436;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-card p {
+            font-size: 18px;
+            color: #636e72;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn-start {
+            padding: 16px 50px;
+            font-size: 18px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.6);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* ==================== SELECTION SCREEN ==================== */
+        .selection-wrapper {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .selection-card {
+            background: white;
+            padding: 60px 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .selection-card h2 {
+            text-align: center;
+            color: #2d3436;
+            margin-bottom: 50px;
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .count-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 25px;
+        }
+
+        .count-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f0f7 100%);
+            padding: 35px 20px;
+            border-radius: 20px;
+            border: 3px solid #dfe6e9;
+            cursor: pointer;
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3436;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .count-card:hover {
+            border-color: #ff6b6b;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.3);
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+        }
+
+        /* ==================== CAMERA SCREEN ==================== */
+        .camera-wrapper {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .camera-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #dfe6e9;
+        }
+
+        .camera-header h2 {
+            font-size: 28px;
+            color: #2d3436;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .close-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+        }
+
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 4px solid rgba(255, 107, 107, 0.3);
+        }
+
+        #videoStream {
+            width: 100%;
+            height: auto;
+            display: block;
+            max-height: 550px;
+            background: #000;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .camera-controls {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .capture-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            padding: 0;
+            font-size: 40px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .capture-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 18px 45px rgba(255, 107, 107, 0.8);
+        }
+
+        .capture-btn:active {
+            transform: scale(0.92);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6); }
+            50% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.8), 0 0 0 15px rgba(255, 107, 107, 0.2); }
+        }
+
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 140px;
+            font-weight: bold;
+            color: #ff6b6b;
+            text-shadow: 0 0 40px rgba(255, 107, 107, 1);
+            animation: countdownPulse 1s ease;
+            z-index: 20;
+        }
+
+        .countdown.hidden {
+            display: none;
+        }
+
+        @keyframes countdownPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f0f7 100%);
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .setting-item label {
+            font-weight: 700;
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        .setting-item select {
+            padding: 12px 15px;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            color: #2d3436;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .setting-item select:hover {
+            border-color: #4ecdc4;
+            background: #f8f9ff;
+        }
+
+        .setting-item select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            color: #2d3436;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            animation: slideInUp 0.3s ease;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        /* ==================== FINISH SCREEN ==================== */
+        .finish-card {
+            background: white;
+            padding: 60px 50px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .finish-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        .finish-card h2 {
+            font-size: 36px;
+            color: #2d3436;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .finish-card p {
+            font-size: 18px;
+            color: #636e72;
+            margin-bottom: 40px;
+        }
+
+        .photos-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 20px;
+        }
+
+        .photo-thumb {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 50px 30px;
+            }
+
+            .welcome-icon {
+                font-size: 80px;
+            }
+
+            .welcome-card h1 {
+                font-size: 36px;
+            }
+
+            .selection-card h2 {
+                font-size: 24px;
+            }
+
+            .count-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .camera-card {
+                padding: 20px;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .finish-card {
+                padding: 40px 25px;
+            }
+
+            .finish-card h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .welcome-card {
+                padding: 40px 20px;
+            }
+
+            .welcome-icon {
+                font-size: 60px;
+            }
+
+            .welcome-card h1 {
+                font-size: 28px;
+            }
+
+            .capture-btn {
+                width: 75px;
+                height: 75px;
+                font-size: 32px;
+            }
+
+            .count-card {
+                padding: 25px 15px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="screen active">
+        <div class="welcome-wrapper">
+            <div class="welcome-card">
+                <i class="fas fa-camera welcome-icon"></i>
+                <h1>PhotoBox</h1>
+                <p>Aplikasi Pemotretan Seru dengan Filter & Efek Menarik</p>
+                <button class="btn-start" onclick="startApp()">
+                    <i class="fas fa-play"></i> Mulai Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Selection Screen -->
+    <div id="selectionScreen" class="screen">
+        <div class="selection-wrapper">
+            <div class="selection-card">
+                <h2>📸 Pilih Jumlah Foto (3-6)</h2>
+                <div class="count-grid">
+                    <div class="count-card" onclick="startCamera(3)">3 📷</div>
+                    <div class="count-card" onclick="startCamera(4)">4 📷</div>
+                    <div class="count-card" onclick="startCamera(5)">5 📷</div>
+                    <div class="count-card" onclick="startCamera(6)">6 📷</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Camera Screen -->
+    <div id="cameraScreen" class="screen">
+        <div class="camera-wrapper">
+            <div class="camera-card">
+                <div class="camera-header">
+                    <h2>🎥 Ambil Foto (<span id="photoCounter">1</span>/<span id="totalPhotos">3</span>)</h2>
+                    <button class="close-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                </div>
+
+                <div id="message" class="message"></div>
+
+                <div class="video-container">
+                    <video id="videoStream" autoplay playsinline muted></video>
+                    <div class="video-overlay">
+                        <div id="countdown" class="countdown hidden"></div>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="capture-btn" onclick="capturePhoto()" title="Ambil Foto">
+                            <i class="fas fa-camera"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label>🎨 Filter:</label>
+                        <select id="filterSelect" onchange="applyFilter(this.value)">
+                            <option value="none">Tidak Ada</option>
+                            <option value="grayscale">Hitam Putih</option>
+                            <option value="sepia">Sepia</option>
+                            <option value="brightness">Terang</option>
+                            <option value="cool">Cool</option>
+                            <option value="warm">Hangat</option>
+                            <option value="saturate">Vivid</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>📱 Kamera:</label>
+                        <select id="cameraSelect" onchange="switchCamera()">
+                            <option value="front">Depan</option>
+                            <option value="back">Belakang</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </button>
+                    <button class="btn btn-primary" onclick="skipPhoto()">
+                        <i class="fas fa-arrow-right"></i> Lewati
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Finish Screen -->
+    <div id="finishScreen" class="screen">
+        <div class="finish-card">
+            <div class="finish-icon">✨</div>
+            <h2>Selesai!</h2>
+            <p id="photoCount">Anda telah mengambil 3 foto</p>
+            <div class="photos-preview" id="photosPreview"></div>
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="startApp()">
+                    <i class="fas fa-redo"></i> Mulai Lagi
+                </button>
+                <button class="btn btn-primary" onclick="downloadAll()">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        const state = {
+            totalPhotos: 0,
+            currentPhotoIndex: 0,
+            photos: [],
+            stream: null,
+            cameraMode: 'user',
+            currentFilter: 'none'
+        };
+
+        // ==================== SCREEN NAVIGATION ====================
+        function hideAllScreens() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+
+        function showScreen(screenId) {
+            hideAllScreens();
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function startApp() {
+            showScreen('selectionScreen');
+        }
+
+        function goBack() {
+            stopCamera();
+            showScreen('selectionScreen');
+        }
+
+        // ==================== CAMERA FUNCTIONS ====================
+        async function startCamera(count) {
+            state.totalPhotos = count;
+            state.currentPhotoIndex = 0;
+            state.photos = [];
+            document.getElementById('totalPhotos').textContent = count;
+            document.getElementById('photoCounter').textContent = '1';
+            
+            showScreen('cameraScreen');
+            showMessage('📹 Menginisialisasi kamera...', 'info');
+            
+            setTimeout(() => {
+                initCamera();
+            }, 500);
+        }
+
+        async function initCamera() {
+            try {
+                const constraints = {
+                    video: {
+                        facingMode: state.cameraMode,
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+
+                state.stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('videoStream');
+                video.srcObject = state.stream;
+                
+                showMessage('✅ Kamera siap! Silakan ambil foto', 'success');
+                setTimeout(() => clearMessage(), 3000);
+            } catch (error) {
+                showMessage(`❌ Error: ${error.message}`, 'error');
+                console.error('Camera Error:', error);
+            }
+        }
+
+        function stopCamera() {
+            if (state.stream) {
+                state.stream.getTracks().forEach(track => track.stop());
+                state.stream = null;
+            }
+        }
+
+        async function switchCamera() {
+            state.cameraMode = document.getElementById('cameraSelect').value === 'front' ? 'user' : 'environment';
+            stopCamera();
+            showMessage('🔄 Mengganti kamera...', 'info');
+            setTimeout(initCamera, 300);
+        }
+
+        function applyFilter(filterName) {
+            state.currentFilter = filterName;
+            const video = document.getElementById('videoStream');
+            const filterMap = {
+                'grayscale': 'grayscale(100%)',
+                'sepia': 'sepia(100%)',
+                'brightness': 'brightness(1.3)',
+                'cool': 'hue-rotate(200deg) saturate(1.2)',
+                'warm': 'hue-rotate(-20deg) saturate(1.1)',
+                'saturate': 'saturate(1.5) brightness(1.1)',
+                'none': 'none'
+            };
+            video.style.filter = filterMap[filterName] || 'none';
+        }
+
+        // ==================== PHOTO CAPTURE ====================
+        function capturePhoto() {
+            const video = document.getElementById('videoStream');
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            ctx.filter = window.getComputedStyle(video).filter;
+            ctx.drawImage(video, 0, 0);
+
+            state.photos.push({
+                imageData: canvas.toDataURL('image/png'),
+                filter: state.currentFilter
+            });
+
+            showCountdown();
+            showMessage('✅ Foto berhasil diambil!', 'success');
+
+            setTimeout(() => {
+                clearMessage();
+                state.currentPhotoIndex++;
+
+                if (state.currentPhotoIndex < state.totalPhotos) {
+                    document.getElementById('photoCounter').textContent = state.currentPhotoIndex + 1;
+                } else {
+                    finishPhotography();
+                }
+            }, 2500);
+        }
+
+        function skipPhoto() {
+            state.currentPhotoIndex++;
+
+            if (state.currentPhotoIndex < state.totalPhotos) {
+                document.getElementById('photoCounter').textContent = state.currentPhotoIndex + 1;
+                showMessage('⏭️ Foto dilewati', 'info');
+                setTimeout(() => clearMessage(), 2000);
+            } else {
+                finishPhotography();
+            }
+        }
+
+        function showCountdown() {
+            const countdownEl = document.getElementById('countdown');
+            let count = 3;
+            countdownEl.classList.remove('hidden');
+            countdownEl.textContent = count;
+
+            const interval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownEl.textContent = count;
+                } else {
+                    countdownEl.classList.add('hidden');
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        // ==================== FINISH & DOWNLOAD ====================
+        function finishPhotography() {
+            stopCamera();
+            
+            document.getElementById('photoCount').textContent = 
+                `Anda telah mengambil ${state.photos.length} foto`;
+
+            const preview = document.getElementById('photosPreview');
+            preview.innerHTML = state.photos.map((photo, idx) => 
+                `<img src="${photo.imageData}" alt="Foto ${idx + 1}" class="photo-thumb" onclick="downloadPhoto(${idx})">`
+            ).join('');
+
+            showScreen('finishScreen');
+        }
+
+        function downloadPhoto(index) {
+            const photo = state.photos[index];
+            const link = document.createElement('a');
+            link.href = photo.imageData;
+            link.download = `photobox-${index + 1}-${new Date().getTime()}.png`;
+            link.click();
+        }
+
+        function downloadAll() {
+            state.photos.forEach((photo, index) => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.href = photo.imageData;
+                    link.download = `photobox-${index + 1}-${new Date().getTime()}.png`;
+                    link.click();
+                }, index * 500);
+            });
+            
+            showMessage('📥 Semua foto sedang diunduh...', 'success');
+        }
+
+        // ==================== UTILITIES ====================
+        function showMessage(text, type = 'info') {
+            const messageEl = document.getElementById('message');
+            messageEl.className = `message show ${type}`;
+            messageEl.textContent = text;
+        }
+
+        function clearMessage() {
+            const messageEl = document.getElementById('message');
+            messageEl.classList.remove('show');
+            messageEl.textContent = '';
+        }
+
+        // ==================== INITIALIZATION ====================
+        window.addEventListener('beforeunload', stopCamera);
+    </script>
+</body>
+</html>
