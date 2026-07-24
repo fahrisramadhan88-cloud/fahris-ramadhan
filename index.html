@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoBox - Aplikasi Foto Seru</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="welcome-container">
+                <div class="welcome-content">
+                    <i class="fas fa-camera"></i>
+                    <h1>PhotoBox</h1>
+                    <p>Aplikasi Pemotretan Seru dengan Filter & Stiker</p>
+                    <button class="btn btn-primary" onclick="goToPhotoSelection()">Mulai Sekarang</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Selection Screen -->
+        <div id="photoSelectionScreen" class="screen">
+            <div class="container">
+                <div class="header">
+                    <h2>Pilih Jumlah Foto (3-6)</h2>
+                    <button class="btn-close" onclick="goToWelcome()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="photo-count-selector">
+                    <div class="count-options">
+                        <button class="count-btn" onclick="selectPhotoCount(3)">3 Foto</button>
+                        <button class="count-btn" onclick="selectPhotoCount(4)">4 Foto</button>
+                        <button class="count-btn" onclick="selectPhotoCount(5)">5 Foto</button>
+                        <button class="count-btn" onclick="selectPhotoCount(6)">6 Foto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camera Screen -->
+        <div id="cameraScreen" class="screen">
+            <div class="camera-container">
+                <div class="camera-header">
+                    <h2>Ambil Foto (<span id="photoCounter">1</span>/<span id="totalPhotos">3</span>)</h2>
+                    <button class="btn-close" onclick="goToPhotoSelection()"><i class="fas fa-arrow-left"></i></button>
+                </div>
+
+                <div class="camera-area">
+                    <video id="videoStream" autoplay playsinline></video>
+                    <div class="camera-controls">
+                        <button id="captureBtn" class="btn btn-capture" onclick="capturePhoto()"><i class="fas fa-camera"></i></button>
+                    </div>
+                    <div id="countdown" class="countdown hidden"></div>
+                </div>
+
+                <div class="camera-settings">
+                    <div class="settings-group">
+                        <label>Filter:</label>
+                        <select id="filterSelect" onchange="applyFilter(this.value)">
+                            <option value="none">Tidak Ada</option>
+                            <option value="grayscale">Hitam Putih</option>
+                            <option value="sepia">Sepia</option>
+                            <option value="brightness">Terang</option>
+                            <option value="cool">Cool</option>
+                            <option value="warm">Hangat</option>
+                            <option value="saturate">Vivid</option>
+                            <option value="blur">Blur</option>
+                        </select>
+                    </div>
+                    <div class="settings-group">
+                        <label>Kamera:</label>
+                        <select id="cameraSelect" onchange="switchCamera()">
+                            <option value="front">Depan</option>
+                            <option value="back">Belakang</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Editor Screen -->
+        <div id="editorScreen" class="screen">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <h2>Edit Foto</h2>
+                    <button class="btn-close" onclick="goToCamera()"><i class="fas fa-arrow-left"></i></button>
+                </div>
+
+                <div class="editor-main">
+                    <div class="canvas-wrapper">
+                        <canvas id="photoCanvas"></canvas>
+                        <div id="stickersContainer"></div>
+                    </div>
+
+                    <div class="editor-controls">
+                        <div class="control-panel">
+                            <h3>Filter</h3>
+                            <div class="filter-grid">
+                                <button class="filter-btn" onclick="applyPhotoFilter('none')" title="Original">Original</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('grayscale')" title="Hitam Putih">B&W</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('sepia')" title="Sepia">Sepia</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('brightness')" title="Terang">Bright</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('cool')" title="Cool">Cool</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('warm')" title="Warm">Warm</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('saturate')" title="Vivid">Vivid</button>
+                                <button class="filter-btn" onclick="applyPhotoFilter('blur')" title="Blur">Blur</button>
+                            </div>
+                        </div>
+
+                        <div class="control-panel">
+                            <h3>Stiker</h3>
+                            <div class="sticker-grid" id="stickerGrid"></div>
+                        </div>
+
+                        <div class="control-panel">
+                            <h3>Beauty Filter</h3>
+                            <div class="beauty-controls">
+                                <div class="control-item">
+                                    <label>Brightness</label>
+                                    <input type="range" id="brightnessSlider" min="-30" max="30" value="0" onchange="updateBeautyFilter()">
+                                </div>
+                                <div class="control-item">
+                                    <label>Contrast</label>
+                                    <input type="range" id="contrastSlider" min="-30" max="30" value="0" onchange="updateBeautyFilter()">
+                                </div>
+                                <div class="control-item">
+                                    <label>Blur</label>
+                                    <input type="range" id="blurSlider" min="0" max="15" value="0" onchange="updateBeautyFilter()">
+                                </div>
+                                <div class="control-item">
+                                    <label>Saturasi</label>
+                                    <input type="range" id="saturationSlider" min="-50" max="50" value="0" onchange="updateBeautyFilter()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="btn btn-secondary" onclick="retakePhoto()">Ambil Ulang</button>
+                            <button class="btn btn-primary" onclick="nextPhoto()">Lanjut</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Layout Selection Screen -->
+        <div id="layoutScreen" class="screen">
+            <div class="container">
+                <div class="header">
+                    <h2>Pilih Tata Letak</h2>
+                    <button class="btn-close" onclick="goToEditor()"><i class="fas fa-arrow-left"></i></button>
+                </div>
+                <div class="layout-grid" id="layoutGrid"></div>
+            </div>
+        </div>
+
+        <!-- Final Preview Screen -->
+        <div id="previewScreen" class="screen">
+            <div class="container">
+                <div class="header">
+                    <h2>Pratinjau Hasil Akhir</h2>
+                    <button class="btn-close" onclick="goToLayout()"><i class="fas fa-arrow-left"></i></button>
+                </div>
+                <div class="preview-container">
+                    <div class="preview-content">
+                        <canvas id="finalCanvas"></canvas>
+                    </div>
+                    <div class="download-buttons">
+                        <button class="btn btn-primary" onclick="downloadAs('png')">
+                            <i class="fas fa-download"></i> PNG
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadAs('jpg')">
+                            <i class="fas fa-download"></i> JPG
+                        </button>
+                        <button class="btn btn-primary" onclick="downloadAs('pdf')">
+                            <i class="fas fa-download"></i> PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="goToWelcome()">
+                            <i class="fas fa-redo"></i> Mulai Lagi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/stickers.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/layouts.js"></script>
+    <script src="js/camera.js"></script>
+    <script src="js/editor.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

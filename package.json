@@ -1,0 +1,24 @@
+{
+  "name": "photobox-app",
+  "version": "1.0.0",
+  "description": "A fun PhotoBox web application with filters, stickers, and countdown",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 8000",
+    "dev": "http-server -p 8000 -c-1"
+  },
+  "keywords": [
+    "photobox",
+    "photo",
+    "filters",
+    "stickers",
+    "countdown"
+  ],
+  "author": "Fahris Ramadhan",
+  "license": "MIT",
+  "dependencies": {
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
+    "canvas-confetti": "^1.9.0"
+  }
+}
